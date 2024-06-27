@@ -1,0 +1,17 @@
+SpeechRecognition
+pyaudio
+wave
+sounddevice
+simpleaudio
+openai-whisper
+anthropic
+librosa
+torch 
+torchaudio
+torchvision
+numpy
+vocos 
+encodec
+transformers
+safetensors 
+regex
