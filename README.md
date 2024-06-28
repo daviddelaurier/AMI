@@ -1,4 +1,3 @@
-```markdown
 # myAI - AMI Voice Inference Module
 
 ![myAI Logo](https://example.com/myai-logo.png)
