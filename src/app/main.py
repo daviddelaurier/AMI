@@ -41,41 +41,30 @@ def play_audio(audio_file):
         logger.error(f"Error playing audio file: {str(e)}")
 
 def main():
-    logger.info("Starting the AI assistant...")
-    
-    try:
-        while True:
-            # Listen for wake word
-            listen_for_wakeword()
+
+    # Listen for wake word
+    listen_for_wakeword()
+    print("Wakeword detected")
+                
+    # Record audio
+    audio_file = record_audio()
+    print("Recording complete")
             
-            # Record audio
-            audio_file = record_audio()
+    # Transcribe audio
+    transcription_file = transcribe_and_save(audio_file)
+    print("Transcription complete")
             
-            # Transcribe audio
-            transcription_file = transcribe_and_save(audio_file)
+    # Process transcription and generate response
+    response_audio_file = chat_interface_main(transcription_file)
+    print("LLM response complete")
             
-            # Process transcription and generate response
-            response_audio_file = chat_interface_main(transcription_file)
-            
-            # Play the response audio if it was generated successfully
-            if response_audio_file:
-                logger.info(f"Playing audio response: {response_audio_file}")
-                play_audio(response_audio_file)
-                logger.info("Audio playback completed.")
-            else:
-                logger.warning("No audio response to play.")
-            
-            logger.info("Interaction complete. Waiting for next wake word...")
-    
-    except KeyboardInterrupt:
-        logger.info("AI assistant interrupted by user.")
-    except Exception as e:
-        logger.error(f"An error occurred: {str(e)}")
-    finally:
-        # Quit pygame mixer when the program ends
-        pygame.mixer.quit()
-    
-    logger.info("AI assistant shutting down.")
+    # Play the response audio if it was generated successfully
+    play_audio(response_audio_file)
+    print("Audio playback complete")
+
+# Quit pygame mixer when the program ends
+pygame.mixer.quit()
+
 
 if __name__ == "__main__":
     main()
