@@ -44,28 +44,6 @@ USE AT YOUR OWN RISK!
    - Tell me to take the trash out on the designated day and time.
    - Tell me if someone other than me or my wife are in the backyard or parking area.
 
-## Stack
-
-### Machine Learning
-- moondream2
-- Florence-2
-- Sonnet 3.5
-- MARS5(TBD)
-- Whisper-v3
-- Text-to CAD
-- Porcupine
-
-### LLMs
-llama-3-70B
-llama-3-8B
-claude-sonnet-long-context
-
-### ???
-- Robotic control for the pen plotting robot
-
-### OBS Overlays (dont need API's...)
-- Scheduling and reminder system via screencapture/VLM request of all datastreams I am interested in.
-
 ## Expanded Uses and Long-term Analysis
 
 myAI's capabilities extend beyond daily tasks and can provide valuable insights through long-term data analysis. By continuously monitoring various aspects of your life and work, myAI can identify patterns, optimize processes, and help you make informed decisions. Some expanded uses include:
