@@ -1,5 +1,5 @@
 *.venv
 *.gitignore
-*data/
 *.db
 *.log
+LICENSE

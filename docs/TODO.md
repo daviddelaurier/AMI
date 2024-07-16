@@ -30,25 +30,8 @@
 - [ ] Implementing core functionality
 
 ## Source Code
-- [x] Set up version control (e.g., Git repository)
-```
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin https://github.com/username/artificial-me-intelligence.git
-git push -u origin master
-```
-
+- [x] Set up version control
 - [x] Create project structure and directories
-```
-mkdir -p src/{frontend,backend,database,data_capture}
-touch src/{frontend,backend,database,data_capture}/__init__.py
-mkdir -p tests/{unit,integration}
-touch tests/{unit,integration}/__init__.py
-mkdir docs
-touch README.md requirements.txt .gitignore
-```
-
 - [ ] Implement error handling and logging system
 ```
 import logging

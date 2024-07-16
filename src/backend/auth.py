@@ -1,9 +1,18 @@
+import os
+from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from src.database.db import insert_user, get_user_by_username
 import jwt
 import datetime
 
-SECRET_KEY = "your-secret-key"  # Store this securely, not in the code
+# Load environment variables from .env file
+load_dotenv()
+
+# Get SECRET_KEY from environment variables
+SECRET_KEY = os.getenv("AUTH_SECRET_KEY")
+
+if not SECRET_KEY:
+    raise ValueError("AUTH_SECRET_KEY not set in .env file")
 
 def register_user(username, password):
     hashed_password = generate_password_hash(password)

@@ -11,12 +11,12 @@ print("Loading environment variables...")
 load_dotenv()
 
 # Constants
-GROQ_TEXT_INPUT = os.getenv("GROQ_TEXT_OUTPUT")
+TRANSCRIPT = os.getenv("TRANSCRIPTION_OUTPUT")
 OUTPUT_AUDIO_PATH = os.getenv("SPEECH_OUTPUT_PATH")
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 
 os.makedirs(OUTPUT_AUDIO_PATH, exist_ok=True)
-print(f"GROQ_TEXT_INPUT: {GROQ_TEXT_INPUT}")
+print(f"TRANSCRIPT: {TRANSCRIPT}")
 print(f"OUTPUT_AUDIO_PATH: {OUTPUT_AUDIO_PATH}")
 
 def read_text_files(directory):
@@ -85,7 +85,7 @@ def main():
         print("Starting main process...")
         
         print("Reading input text files...")
-        text_files = read_text_files(GROQ_TEXT_INPUT)
+        text_files = read_text_files(TRANSCRIPT)
         if not text_files:
             print("No text files found. Exiting.")
             return

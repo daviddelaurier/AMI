@@ -1,19 +1,4 @@
-import os
-import shutil
-import time
-import logging
-from dotenv import load_dotenv
-import pyaudio
-import wave
-import numpy as np
-import keyboard
-import torch
-import gc
-from colorama import init, Fore, Style
-from datetime import datetime
-import threading
-from pydub import AudioSegment
-from groq import Groq
+
 
 # Initialize colorama
 init(autoreset=True)
@@ -22,14 +7,14 @@ init(autoreset=True)
 load_dotenv()
 
 # Constants
-WAKE_WORD = "hey amy"
+WAKE_WORD = ""
 SILENCE_THRESHOLD = 500
 SILENCE_DURATION = 5
 SAMPLE_RATE = 16000
 CHANNELS = 1
 CHUNK_SIZE = 1024
 FORMAT = pyaudio.paInt16
-OUTPUT_PATH = os.getenv("GROQ_TEXT_OUTPUT")
+OUTPUT_PATH = os.getenv("TRANSCRIPTION_OUTPUT")
 HF_TOKEN = os.getenv("HF_TOKEN")
 MODEL_PATH = os.getenv("MODEL_PATH", "models")
 
@@ -41,18 +26,6 @@ os.makedirs(MODEL_PATH, exist_ok=True)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-def print_ascii_art():
-    art = [
-        " _ __ __ ___ ",
-        " / \\ | \\/ | |_ _|",
-        " / _ \\ | |\\/| | | | ",
-        " / ___ \\| | | | | | ",
-        "/_/ \\_\\_| |_| |___|",
-    ]
-    for line in art:
-        print(Fore.CYAN + line)
-        time.sleep(0.2)
-    print(Style.RESET_ALL)
 
 def list_input_devices():
     p = pyaudio.PyAudio()
