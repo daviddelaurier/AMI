@@ -1,17 +1,28 @@
 from dotenv import load_dotenv
-import os
+import logging
 import pvporcupine
 import pyaudio
 import struct
-from record_audio import record_audio
-from transcription import transcribe_and_save
-from chat_interface import main as chat_interface_main
+from .record_audio import record_audio
+from .transcription import transcribe_and_save
+from .chat_interface import main as chat_interface_main
 
 load_dotenv()
 
-ACCESS_KEY = os.getenv('ACCESS_KEY')
-KEYWORD_PATH = os.getenv('KEYWORD_PATH')
-TRANSCRIPTION_OUTPUT = os.getenv('TRANSCRIPTION_OUTPUT')
+# Setup logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+import os
+
+# Load environment variables
+ACCESS_KEY = os.getenv("PORCUPINE_ACCESS_KEY")
+KEYWORD_PATH = os.getenv("PORCUPINE_KEYWORD_PATH", "porcupine.txt")
+TRANSCRIPTION_OUTPUT = os.getenv("TRANSCRIPTION_OUTPUT", "transcription.txt")
+
+if not ACCESS_KEY or not KEYWORD_PATH:
+    raise ValueError("Environment variables for Porcupine are not set properly.")
+
 
 def listen_for_wakeword():
     porcupine = None
@@ -33,7 +44,7 @@ def listen_for_wakeword():
             frames_per_buffer=porcupine.frame_length
         )
 
-        print("Listening for 'Hey Amy'...")
+        logger.info("Listening for 'Hey Amy'...")
 
         while True:
             pcm = audio_stream.read(porcupine.frame_length)
@@ -41,12 +52,14 @@ def listen_for_wakeword():
 
             keyword_index = porcupine.process(pcm)
             if keyword_index >= 0:
-                print("Wake word detected!")
+                logger.info("Wake word detected!")
                 recorded_file = record_audio()
                 transcription_file = transcribe_and_save(recorded_file, TRANSCRIPTION_OUTPUT)
                 chat_interface_main(transcription_file)
-                print("Listening for 'Hey Amy'...")
+                logger.info("Listening for 'Hey Amy'...")
 
+    except Exception as e:
+        logger.error(f"An error occurred: {str(e)}")
     finally:
         if porcupine is not None:
             porcupine.delete()

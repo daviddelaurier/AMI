@@ -1,13 +1,17 @@
 import os
 from dotenv import load_dotenv
 import requests
-from pydub import AudioSegment
 from datetime import datetime
 from tqdm import tqdm
-from record_audio import play_audio as play_audio_torchaudio
+import torchaudio
+import logging
+
+# Setup logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # Load environment variables
-print("Loading environment variables...")
+logger.info("Loading environment variables...")
 load_dotenv()
 
 # Constants
@@ -16,11 +20,11 @@ OUTPUT_AUDIO_PATH = os.getenv("SPEECH_OUTPUT_PATH")
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
 
 os.makedirs(OUTPUT_AUDIO_PATH, exist_ok=True)
-print(f"TRANSCRIPT: {TRANSCRIPT}")
-print(f"OUTPUT_AUDIO_PATH: {OUTPUT_AUDIO_PATH}")
+logger.info(f"TRANSCRIPT: {TRANSCRIPT}")
+logger.info(f"OUTPUT_AUDIO_PATH: {OUTPUT_AUDIO_PATH}")
 
 def read_text_files(directory):
-    print(f"Reading text files from directory: {directory}")
+    logger.info(f"Reading text files from directory: {directory}")
     text_files = [f for f in os.listdir(directory) if f.endswith('.txt')]
     texts = []
     for file_name in text_files:
@@ -29,15 +33,15 @@ def read_text_files(directory):
             with open(file_path, 'r', encoding='utf-8') as file:
                 text = file.read()
             texts.append((file_name, text))
-            print(f"Read '{file_name}'. Length: {len(text)} characters")
+            logger.info(f"Read '{file_name}'. Length: {len(text)} characters")
         except Exception as e:
-            print(f"Error reading {file_name}: {str(e)}")
+            logger.error(f"Error reading {file_name}: {str(e)}")
     return texts
 
 def synthesize_speech(text, output_file):
     try:
-        print("Starting speech synthesis...")
-        print(f"Input text: '{text}'")
+        logger.info("Starting speech synthesis...")
+        logger.info(f"Input text: '{text}'")
         
         url = f"https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL"  # Voice ID for "Bella"
         
@@ -54,56 +58,57 @@ def synthesize_speech(text, output_file):
             "xi-api-key": ELEVENLABS_API_KEY
         }
 
-        print("Sending request to ElevenLabs API...")
+        logger.info("Sending request to ElevenLabs API...")
         response = requests.post(url, json=payload, headers=headers)
         
         if response.status_code == 200:
-            print(f"Saving synthesized speech to {output_file}")
+            logger.info(f"Saving synthesized speech to {output_file}")
             with open(output_file, "wb") as f:
                 f.write(response.content)
-            print(f"Speech synthesized and saved successfully.")
+            logger.info(f"Speech synthesized and saved successfully.")
             return True
         else:
-            print(f"Error from ElevenLabs API: {response.status_code} - {response.text}")
+            logger.error(f"Error from ElevenLabs API: {response.status_code} - {response.text}")
             return False
     except Exception as e:
-        print(f"An error occurred during speech synthesis: {str(e)}")
+        logger.error(f"An error occurred during speech synthesis: {str(e)}")
         return False
 
 def play_audio(file_path):
     try:
-        print(f"Playing audio file: {file_path}")
-        play_audio_torchaudio(file_path)
-        print("Audio playback completed.")
+        logger.info(f"Playing synthesized audio: {file_path}")
+        waveform, sample_rate = torchaudio.load(file_path)
+        torchaudio.play(waveform, sample_rate)
+        logger.info("Audio playback completed.")
     except Exception as e:
-        print(f"Error playing audio: {str(e)}")
+        logger.error(f"Error playing audio: {str(e)}")
 
-def main():
+def main(transcription_file):
     try:
-        print("Starting main process...")
+        logger.info("Starting main process...")
         
-        print("Reading input text files...")
-        text_files = read_text_files(TRANSCRIPT)
-        if not text_files:
-            print("No text files found. Exiting.")
-            return
+        # Read the transcription file
+        with open(transcription_file, 'r', encoding='utf-8') as file:
+            text = file.read()
         
-        for file_name, text in text_files:
-            timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-            output_file = os.path.join(OUTPUT_AUDIO_PATH, f"{file_name[:-4]}_{timestamp}.mp3")
-            print(f"Processing '{file_name}'. Output file will be: {output_file}")
-            
-            success = synthesize_speech(text, output_file)
-            if success:
-                play_audio(output_file)
-            else:
-                print(f"Speech synthesis failed for '{file_name}'. Skipping audio playback.")
+        # Generate a unique filename for the synthesized speech
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        output_file = os.path.join(OUTPUT_AUDIO_PATH, f"response_{timestamp}.mp3")
+        logger.info(f"Processing transcription. Output file will be: {output_file}")
         
-        print("Main process completed.")
+        # Synthesize speech
+        success = synthesize_speech(text, output_file)
+        if success:
+            # Play the synthesized speech
+            play_audio(output_file)
+        else:
+            logger.info("Speech synthesis failed. Skipping audio playback.")
+        
+        logger.info("Main process completed.")
     except Exception as e:
-        print(f"An error occurred in the main process: {str(e)}")
+        logger.error(f"An error occurred in the main process: {str(e)}")
 
 if __name__ == "__main__":
-    print("Script started.")
+    logger.info("Script started.")
     main()
-    print("Script finished.")
+    logger.info("Script finished.")

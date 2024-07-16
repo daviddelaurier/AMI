@@ -9,13 +9,17 @@ from colorama import init, Fore, Style
 from datetime import datetime
 import threading
 from groq import Groq
-from record_audio import record_audio
+from .record_audio import record_audio
 
 # Initialize colorama
 init(autoreset=True)
 
 # Load environment variables
 load_dotenv()
+
+# Setup logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # Constants
 SAMPLE_RATE = 16000
@@ -32,7 +36,7 @@ def get_daily_output_path():
     return daily_path
 
 def transcribe_audio(audio_file, model="whisper-large-v3", prompt=None, response_format="text", language=None, temperature=0.0):
-    print(Fore.CYAN + f"Transcribing audio file: {audio_file}")
+    logger.info(f"Transcribing audio file: {audio_file}")
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         raise ValueError("GROQ_API_KEY environment variable is not set")
@@ -51,7 +55,7 @@ def transcribe_audio(audio_file, model="whisper-large-v3", prompt=None, response
 
 def save_transcription(result, audio_file):
     if result is None:
-        print(Fore.RED + "Transcription failed. No result to save.")
+        logger.error("Transcription failed. No result to save.")
         return None
 
     daily_path = get_daily_output_path()
@@ -62,7 +66,7 @@ def save_transcription(result, audio_file):
             f.write(result.text)
         else:
             f.write(str(result))
-    print(Fore.GREEN + f"Transcription saved to {transcription_file}")
+    logger.info(f"Transcription saved to {transcription_file}")
     return transcription_file
 
 def transcribe_and_save():
