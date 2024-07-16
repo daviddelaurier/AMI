@@ -7,6 +7,8 @@ import os
 from .record_audio import record_audio
 from .transcription import transcribe_and_save
 from .chat_interface import main as chat_interface_main
+import keyboard
+import time
 
 load_dotenv()
 
@@ -62,7 +64,16 @@ def listen_for_wakeword():
                 recorded_file = record_audio()
                 transcription_file = transcribe_and_save(recorded_file)
                 chat_interface_main(transcription_file)
-                logger.info("Listening for 'Hey Amy'...")
+                
+                logger.info("Press 'r' to record the next message or 'q' to quit.")
+                while True:
+                    if keyboard.is_pressed('r'):
+                        logger.info("Recording next message...")
+                        break
+                    elif keyboard.is_pressed('q'):
+                        logger.info("Quitting...")
+                        return
+                    time.sleep(0.1)
 
     except pvporcupine.PorcupineInvalidArgumentError as e:
         logger.error(f"Porcupine initialization error: {str(e)}")
