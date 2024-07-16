@@ -1,4 +1,5 @@
-   # myAI
+   # A.M.I.
+   Artificial Me Intelligence
 
 ![myAI](https://i.imgur.com/GXpjcgB.png)
 
