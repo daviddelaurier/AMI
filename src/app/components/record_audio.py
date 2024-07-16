@@ -1,59 +1,51 @@
+import pyaudio
+import wave
 import os
 from dotenv import load_dotenv
-from datetime import datetime
-import time
-import torchaudio
-import logging
+from pathlib import Path
+import tempfile
 
-# Load environment variables
 load_dotenv()
 
-# Constants
-SAMPLE_RATE = 16000
+CHUNK = 1024
+FORMAT = pyaudio.paInt16
 CHANNELS = 1
-RECORDING_DURATION = 5
-AUDIO_RECORDING_OUTPUT = os.getenv('AUDIO_RECORDING_OUTPUT')
-
-# Setup logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+RATE = 16000
+RECORD_SECONDS = 5
+WAVE_OUTPUT_FILENAME = os.getenv("AUDIO_RECORDING_OUTPUT", os.path.join(tempfile.gettempdir(), "output.wav"))
 
 def record_audio():
-    logger.info(f"Recording audio for {RECORDING_DURATION} seconds...")
-    
-    # Initialize the audio recorder
-    recorder = torchaudio.io.AudioRecorder(
-        sample_rate=SAMPLE_RATE,
-        num_channels=CHANNELS,
-        format="wav"
-    )
+    p = pyaudio.PyAudio()
 
-    # Start recording
-    recorder.start()
-    time.sleep(RECORDING_DURATION)
-    recorder.stop()
+    stream = p.open(format=FORMAT,
+                    channels=CHANNELS,
+                    rate=RATE,
+                    input=True,
+                    frames_per_buffer=CHUNK)
 
-    # Get the recorded audio
-    waveform, _ = recorder.get_recorded()
+    print("* recording")
 
-    # Generate a unique filename
-    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    filename = f"recording_{timestamp}.wav"
-    file_path = os.path.join(AUDIO_RECORDING_OUTPUT, filename)
+    frames = []
 
-    # Save the audio file
-    torchaudio.save(file_path, waveform, SAMPLE_RATE)
-    logger.info(f"Audio saved to: {file_path}")
+    for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+        data = stream.read(CHUNK)
+        frames.append(data)
 
-    return file_path
+    print("* done recording")
 
-def play_audio(file_path):
-    logger.info(f"Playing audio: {file_path}")
-    waveform, sample_rate = torchaudio.load(file_path)
-    torchaudio.play(waveform, sample_rate)
-    logger.info("Audio playback completed.")
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
 
-if __name__ == "__main__":
-    os.makedirs(AUDIO_RECORDING_OUTPUT, exist_ok=True)
-    
-    recorded_file = record_audio()
+    # Create the directory if it doesn't exist
+    output_dir = Path(os.path.dirname(WAVE_OUTPUT_FILENAME))
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+    wf.setnchannels(CHANNELS)
+    wf.setsampwidth(p.get_sample_size(FORMAT))
+    wf.setframerate(RATE)
+    wf.writeframes(b''.join(frames))
+    wf.close()
+
+    return WAVE_OUTPUT_FILENAME

@@ -3,8 +3,14 @@ from dotenv import load_dotenv
 import requests
 from datetime import datetime
 from tqdm import tqdm
-import torchaudio
+import pyaudio
+import wave
 import logging
+from langchain.chains import LLMChain
+from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, MessagesPlaceholder
+from langchain_core.messages import SystemMessage
+from langchain.chains.conversation.memory import ConversationBufferWindowMemory
+from langchain_groq import ChatGroq
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -18,6 +24,8 @@ load_dotenv()
 TRANSCRIPT = os.getenv("TRANSCRIPTION_OUTPUT")
 OUTPUT_AUDIO_PATH = os.getenv("SPEECH_OUTPUT_PATH")
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+logger.info(f"GROQ_API_KEY loaded: {'Yes' if GROQ_API_KEY else 'No'}")
 
 os.makedirs(OUTPUT_AUDIO_PATH, exist_ok=True)
 logger.info(f"TRANSCRIPT: {TRANSCRIPT}")
@@ -77,11 +85,61 @@ def synthesize_speech(text, output_file):
 def play_audio(file_path):
     try:
         logger.info(f"Playing synthesized audio: {file_path}")
-        waveform, sample_rate = torchaudio.load(file_path)
-        torchaudio.play(waveform, sample_rate)
+        
+        # Open the audio file
+        wf = wave.open(file_path, 'rb')
+        
+        # Initialize PyAudio
+        p = pyaudio.PyAudio()
+        
+        # Open a stream
+        stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                        channels=wf.getnchannels(),
+                        rate=wf.getframerate(),
+                        output=True)
+        
+        # Read data in chunks
+        chunk_size = 1024
+        data = wf.readframes(chunk_size)
+        
+        # Play the audio
+        while data:
+            stream.write(data)
+            data = wf.readframes(chunk_size)
+        
+        # Clean up
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+        
         logger.info("Audio playback completed.")
     except Exception as e:
         logger.error(f"Error playing audio: {str(e)}")
+
+def process_text_with_groq(text):
+    logger.info("Processing text with Groq API...")
+    model = 'llama3-8b-8192'
+    groq_chat = ChatGroq(groq_api_key=GROQ_API_KEY, model_name=model)
+    
+    system_prompt = 'You are a friendly conversational chatbot'
+    memory = ConversationBufferWindowMemory(k=5, memory_key="chat_history", return_messages=True)
+    
+    prompt = ChatPromptTemplate.from_messages([
+        SystemMessage(content=system_prompt),
+        MessagesPlaceholder(variable_name="chat_history"),
+        HumanMessagePromptTemplate.from_template("{human_input}")
+    ])
+    
+    conversation = LLMChain(
+        llm=groq_chat,
+        prompt=prompt,
+        verbose=False,
+        memory=memory,
+    )
+    
+    response = conversation.predict(human_input=text)
+    logger.info("Groq API processing completed.")
+    return response
 
 def main(transcription_file):
     try:
@@ -91,22 +149,26 @@ def main(transcription_file):
         with open(transcription_file, 'r', encoding='utf-8') as file:
             text = file.read()
         
+        # Process text with Groq API
+        processed_text = process_text_with_groq(text)
+        
         # Generate a unique filename for the synthesized speech
         timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
         output_file = os.path.join(OUTPUT_AUDIO_PATH, f"response_{timestamp}.mp3")
         logger.info(f"Processing transcription. Output file will be: {output_file}")
         
         # Synthesize speech
-        success = synthesize_speech(text, output_file)
+        success = synthesize_speech(processed_text, output_file)
         if success:
-            # Play the synthesized speech
-            play_audio(output_file)
+            logger.info(f"Speech synthesized successfully: {output_file}")
+            return output_file
         else:
-            logger.info("Speech synthesis failed. Skipping audio playback.")
+            logger.error("Speech synthesis failed.")
+            return None
         
-        logger.info("Main process completed.")
     except Exception as e:
         logger.error(f"An error occurred in the main process: {str(e)}")
+        return None
 
 if __name__ == "__main__":
     logger.info("Script started.")

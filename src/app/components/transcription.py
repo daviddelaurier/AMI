@@ -26,12 +26,12 @@ SAMPLE_RATE = 16000
 CHANNELS = 1
 CHUNK_SIZE = 1024
 FORMAT = pyaudio.paInt16
-OUTPUT_PATH = os.getenv("TRANSCRIPTION_OUTPUT")
+TRANSCRIPTION_OUTPUT = os.getenv("TRANSCRIPTION_OUTPUT", "transcription.txt")
 
 # Ensure output directory exists and create a folder for today
 def get_daily_output_path():
     today = datetime.now().strftime("%Y-%m-%d")
-    daily_path = os.path.join(OUTPUT_PATH, today)
+    daily_path = os.path.join(TRANSCRIPTION_OUTPUT, today)
     os.makedirs(daily_path, exist_ok=True)
     return daily_path
 
@@ -69,16 +69,10 @@ def save_transcription(result, audio_file):
     logger.info(f"Transcription saved to {transcription_file}")
     return transcription_file
 
-def transcribe_and_save():
-    daily_path = get_daily_output_path()
-    audio_file = record_audio(daily_path)
+def transcribe_and_save(audio_file):
     result = transcribe_audio(audio_file)
     transcription_file = save_transcription(result, audio_file)
     return transcription_file
 
 def transcribe_in_background(audio_file):
     threading.Thread(target=transcribe_and_save, args=(audio_file,), daemon=True).start()
-
-def transcribe_and_save(audio_file):
-    result = transcribe_audio(audio_file)
-    save_transcription(result, audio_file)
