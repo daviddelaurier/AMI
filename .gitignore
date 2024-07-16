@@ -1,1 +1,4 @@
-.venv
+*.pyc
+/data
+/.venv
+src/app/components/__pycache__
