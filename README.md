@@ -1,48 +1,59 @@
-   # A.M.I.
-   Artificial Me Intelligence
+
 
 ![myAI](https://i.imgur.com/GXpjcgB.png)
 
-## Cameras and Microphones Are All You Need
 
-## WARNING
+# myAI: Seamless AI Integration for Enhanced Living
 
-I believe that AI systems must be fully integrated into your environment to truly enhance its users. 
-This causes issues when building ML and LLMs into products because you must violate all privacy of the user.
+## Embracing the Future of AI-Assisted Environments
 
-Realizing this, I have decided to build it myself. Anyone is welcome to try this for themselves obviously, but dont come crying to me when your entire life is used as training data for GPT-5. 
+In an era where artificial intelligence is rapidly evolving, myAI stands at the forefront of integrating cutting-edge AI technologies into our daily lives. This project aims to create a fully immersive AI-assisted environment that enhances productivity, creativity, and overall quality of life.
 
-USE AT YOUR OWN RISK!
+## A Note on Privacy and Data Usage
 
-## Initial Implementations (more to come)
+It's important to acknowledge that the comprehensive nature of myAI's integration raises significant privacy considerations. By design, this system requires access to various aspects of your environment to function optimally. Users should be aware that this level of integration means that a substantial amount of personal data will be processed and analyzed by the AI.
 
-### Business desk:
-   - Automatic OCR when documents are placed in the "IN" Document Bin
-   - Keep track of what I was previously working on because I never remember and no app exists that does this well.
+**IMPORTANT:** This project is intended for personal use and experimentation. By implementing myAI, you are choosing to prioritize the benefits of a fully integrated AI assistant over traditional notions of privacy. Please consider the implications carefully before proceeding.
 
-### Ceramic 3D printer:
-   - Natural language to 3d printed object.
-   - Monitor the success or failure of prints.
-   - Log Glaze Reicpies
-   - Log Kiln Settings
-   - Log Weather Data during firing process
+## Key Features and Implementations
 
-### Plotting Robot:
-   - Natural language to SVG text/image that is routed to the robot.
-   - Ask my AI write personalized thank you letters to clients using the pen plotter.
-   - Ask my AI to create drawing mockups for new project ideas I am working on.
+myAI is designed to seamlessly integrate into various aspects of your home and work environment. Here are some of the initial implementations:
 
-### Office kitchen:
-   - Monitor the contents of my refrigerator and tell me what to make based on available ingredients, previous meals, and expiration dates.
-   - Tell me when it's time to load the dishes into the dishwasher.
-   - Tell me when the dishwasher cycle is complete.
-   - Monitor my coffee consumption and the amount of coffee left in the pot.
+1. **Business Desk Optimization**
+   - Automatic OCR for document processing
+   - Intelligent task tracking and work resumption assistance
 
-### Backyard and parking area:
-   - Monitor my two dogs' activities to ensure their well-being and safety.
-   - Track both of my vehicle usages for maintenance and scheduling.
-   - Tell me to take the trash out on the designated day and time.
-   - Tell me if someone other than me or my wife are in the backyard or parking area.
+2. **Ceramic 3D Printing Assistant**
+   - Natural language to 3D object conversion
+   - Print monitoring and analysis
+   - Glaze recipe and kiln setting management
+   - Weather data logging for firing processes
+
+3. **Artistic Collaboration with Plotting Robot**
+   - Natural language to SVG conversion for robotic plotting
+   - AI-generated personalized thank-you letters
+   - Collaborative mockup creation for new projects
+
+4. **Smart Kitchen Management**
+   - Intelligent recipe suggestions based on available ingredients
+   - Automated dishwasher cycle notifications
+   - Coffee consumption tracking and analysis
+
+5. **Home Environment Monitoring**
+   - Pet activity and well-being tracking
+   - Vehicle usage monitoring for maintenance scheduling
+   - Automated reminders for household tasks
+   - Security monitoring for unauthorized presence
+
+## Technology Stack
+
+myAI leverages a powerful combination of machine learning models, language models, and specialized AI tools to deliver its wide range of functionalities. Some key components include:
+
+- **Machine Learning:** moondream2, Florence-2, Sonnet 3.5, MARS5 (TBD), Whisper-v3
+- **Language Models:** llama-3-70B, llama-3-8B, claude-sonnet-long-context
+- **Specialized Tools:** Text-to-CAD, Porcupine
+
+Join us in exploring the possibilities of a fully AI-integrated lifestyle with myAI. The future of smart living starts here.
 
 ## Stack
 
