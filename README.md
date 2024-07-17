@@ -55,28 +55,6 @@ myAI leverages a powerful combination of machine learning models, language model
 
 Join us in exploring the possibilities of a fully AI-integrated lifestyle with myAI. The future of smart living starts here.
 
-## Stack
-
-### Machine Learning
-- moondream2
-- Florence-2
-- Sonnet 3.5
-- MARS5(TBD)
-- Whisper-v3
-- Text-to CAD
-- Porcupine
-
-### LLMs
-llama-3-70B
-llama-3-8B
-claude-sonnet-long-context
-
-### ???
-- Robotic control for the pen plotting robot
-
-### OBS Overlays (dont need API's...)
-- Scheduling and reminder system via screencapture/VLM request of all datastreams I am interested in.
-
 ## Expanded Uses and Long-term Analysis
 
 myAI's capabilities extend beyond daily tasks and can provide valuable insights through long-term data analysis. By continuously monitoring various aspects of your life and work, myAI can identify patterns, optimize processes, and help you make informed decisions. Some expanded uses include:
