@@ -13,21 +13,19 @@ In an era where artificial intelligence is rapidly evolving, myAI stands at the 
 
 It's important to acknowledge that the comprehensive nature of myAI's integration raises significant privacy considerations. By design, this system requires access to various aspects of your environment to function optimally. Users should be aware that this level of integration means that a substantial amount of personal data will be processed and analyzed by the AI.
 
-**IMPORTANT:** This project is intended for personal use and experimentation. By implementing myAI, you are choosing to prioritize the benefits of a fully integrated AI assistant over traditional notions of privacy. Please consider the implications carefully before proceeding.
+**IMPORTANT:** This project is intended for personal use and experimentation. By implementing AMI, you are choosing to prioritize the benefits of a fully integrated AI assistant over traditional notions of privacy. Please consider the implications carefully before proceeding.
 
-## Key Features and Implementations
-
-myAI is designed to seamlessly integrate into various aspects of your home and work environment. Here are some of the initial implementations:
+## What can AMI do now? (August, 1st 2024)
 
 1. **Business Desk Optimization**
-   - Automatic OCR for document processing
-   - Intelligent task tracking and work resumption assistance
+   - Automatic OCR for all paper documents that I recieve.
+   - Object Tracking of my keys, wallet, airpods, apple watch, notebook, ipad, laptop
+   - Lighting control
 
 2. **Ceramic 3D Printing Assistant**
    - Natural language to 3D object conversion
-   - Print monitoring and analysis
+   - Print monitoring and analysis, reports to me as the print runs. 
    - Glaze recipe and kiln setting management
-   - Weather data logging for firing processes
 
 3. **Artistic Collaboration with Plotting Robot**
    - Natural language to SVG conversion for robotic plotting
